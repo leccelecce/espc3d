@@ -94,6 +94,19 @@ function updateTracker(updateData) {
       trackingSpheres.push(newSphere);
       groupPivot.add(newSphere);
       trackingObject = scene.getObjectByName(trackName, true);
+
+
+			//
+        
+      var labelDiv = document.createElement( 'div' );
+      labelDiv.className = 'label';
+      labelDiv.textContent = `${trackName}`;
+      labelDiv.style.marginTop = '-1em';
+      var labelElement = new THREE.CSS2DObject( labelDiv );
+      labelElement.position.copy( newSphere.geometry.vertices );
+      groupPivot.add(labelElement);
+      //particles.add( labelElement );
+      
     }
     trackingObject.position.set(tracker.x - 12, tracker.y - 10, tracker.z);
   }
@@ -104,6 +117,11 @@ function initScene() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ReinhardToneMapping;
+
+  labelRenderer = new THREE.CSS2DRenderer();
+  labelRenderer.setSize( window.innerWidth, window.innerHeight );
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0px';
 
   scene = new THREE.Scene();
 
@@ -145,6 +163,7 @@ function initScene() {
   renderer.toneMappingExposure = bloomParams.exposure;
 
   document.body.appendChild(renderer.domElement);
+  document.body.appendChild( labelRenderer.domElement );
 
   roomGeometry = [];
 
@@ -222,6 +241,7 @@ function render() {
   controls.update();
 
   renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
 
   composer.render();
 
