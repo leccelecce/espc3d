@@ -115,11 +115,10 @@ function initScene() {
   );
   scene.add(camera);
 
-  //controls = new OrbitControls(camera, renderer.domElement);
-  //controls.autoRotate = false; // disabled for now
-  //controls.enableDamping = true;
-  //controls.minDistance = 25;
-  //controls.maxDistance = 50;
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.minDistance = 25;
+  controls.maxDistance = 50;
 
   const renderScene = new RenderPass(scene, camera);
 
@@ -193,7 +192,7 @@ function initScene() {
   groupPivot.rotation.z = 15.2;
 
   camera.position.set(0, 0, 23);
-  //controls.update();
+  controls.update();
 
   window.addEventListener("resize", onWindowResize);
 }
@@ -217,9 +216,10 @@ function render() {
     pulseValue = 0.005;
   }
 
-  groupPivot.rotation.z += 0.002;
+  // disable rotation for now
+  //groupPivot.rotation.z += 0.002;
 
-  //controls.update();
+  controls.update();
 
   renderer.render(scene, camera);
 
