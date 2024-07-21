@@ -189,7 +189,7 @@ function initScene() {
   });
 
   groupPivot.rotation.x = 5.2;
-  groupPivot.rotation.z = 15.2;
+  groupPivot.rotation.z = 10.2;
 
   camera.position.set(0, 0, 23);
   controls.update();
