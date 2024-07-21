@@ -9,7 +9,7 @@ const espCompanionAPI = process.env.ESPC3D_API || "";
 
 var mqttOutput;
 
-var sendInterval = 5000;
+var sendInterval = 2500;
 
 var mqttClient;
 var espConfig;
