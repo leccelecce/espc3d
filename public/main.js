@@ -116,6 +116,7 @@ function initScene() {
   scene.add(camera);
 
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.autoRotate = false; // disabled for now
   controls.enableDamping = true;
   controls.minDistance = 25;
   controls.maxDistance = 50;
