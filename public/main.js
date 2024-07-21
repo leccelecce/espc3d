@@ -4,8 +4,9 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-var scene, camera, composer, renderer, controls;
+var scene, camera, composer, renderer, labelRenderer, controls;
 var groupPivot, roomGeometry, roomJson;
 
 var trackingSpheres = [];
@@ -80,6 +81,7 @@ function updateTracker(updateData) {
 
     // find the tracking object
     var trackingObject = scene.getObjectByName(trackName, true);
+    var trackingObjectLabel = scene.getObjectByName(trackName + '#label', true);
     if (!trackingObject) {
       var color = trackerMaterials[trackingSpheres.length + 1].color;
 
@@ -94,8 +96,24 @@ function updateTracker(updateData) {
       trackingSpheres.push(newSphere);
       groupPivot.add(newSphere);
       trackingObject = scene.getObjectByName(trackName, true);
+
+//
+        
+      var labelDiv = document.createElement( 'div' );
+      labelDiv.className = 'label';
+      labelDiv.textContent = `${trackName}`;
+      labelDiv.style.color = '#ffffff';
+      labelDiv.style.marginTop = '-1em';
+      var labelElement = new CSS2DObject( labelDiv );
+      labelElement.name = trackName + '#label';
+      labelElement.position.set(tracker.x - 12, tracker.y - 10, tracker.z); // copied from above
+      groupPivot.add(labelElement);
+
+      trackingObjectLabel = scene.getObjectByName(trackName + '#label', true);
+      
     }
     trackingObject.position.set(tracker.x - 12, tracker.y - 10, tracker.z);
+    trackingObjectLabel.position.set(tracker.x - 12, tracker.y - 10, tracker.z);
   }
 }
 
@@ -104,6 +122,11 @@ function initScene() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ReinhardToneMapping;
+
+  labelRenderer = new CSS2DRenderer({});
+  labelRenderer.setSize( window.innerWidth, window.innerHeight );
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0px';
 
   scene = new THREE.Scene();
 
@@ -115,7 +138,7 @@ function initScene() {
   );
   scene.add(camera);
 
-  controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, labelRenderer.domElement);
   controls.enableDamping = true;
   controls.minDistance = 25;
   controls.maxDistance = 50;
@@ -145,6 +168,7 @@ function initScene() {
   renderer.toneMappingExposure = bloomParams.exposure;
 
   document.body.appendChild(renderer.domElement);
+  document.body.appendChild(labelRenderer.domElement);
 
   roomGeometry = [];
 
@@ -221,6 +245,7 @@ function render() {
   controls.update();
 
   renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
 
   composer.render();
 
