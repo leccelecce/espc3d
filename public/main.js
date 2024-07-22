@@ -51,6 +51,8 @@ const trackerMaterials = [
   new THREE.MeshPhongMaterial({ emissive: 0x41ff04 }),
 ];
 
+var trackerLabels = [];
+
 //
 //
 
@@ -111,14 +113,26 @@ function updateTracker(updateData) {
 
 //
         
-      var labelDiv = document.createElement( 'div' );
-      labelDiv.className = 'label';
-      labelDiv.textContent = `${trackName}`;
-      labelDiv.style.color = '#ffffff';
-      labelDiv.style.marginTop = '-1em';
-      var labelElement = new CSS2DObject( labelDiv );
+      var labelDivEle = document.createElement( 'div' );
+      labelDivEle.style.color = '#ffffff';
+      labelDivEle.style.fontFamily = 'Arial';
+      labelDivEle.style.fontSize = '0.8rem;';
+      labelDivEle.style.marginTop = '-1em';
+      
+      var labelDivLine1 = document.createElement( 'div' );
+      labelDivLine1.textContent = `${trackName}`;
+
+      var labelDivLine2 = document.createElement( 'div' );
+      labelDivLine2.textContent = `${tracker.confidence}% confidence from ${tracker.fixes} fixes`;
+      
+      labelDivEle.append(labelDivLine1, labelDivLine2);
+
+      trackerLabels[trackName] = labelDivLine2;
+
+      var labelElement = new CSS2DObject( labelDivEle );
       labelElement.name = trackName + '#label';
-      labelElement.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z); // copied from above
+      labelElement.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
+      
       groupPivot.add(labelElement);
 
       trackingObjectLabel = scene.getObjectByName(trackName + '#label', true);
@@ -126,6 +140,8 @@ function updateTracker(updateData) {
     }
     trackingObject.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
     trackingObjectLabel.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
+
+    trackerLabels[trackName].textContent = `${tracker.confidence}% confidence from ${tracker.fixes} fixes`;
   }
 }
 
