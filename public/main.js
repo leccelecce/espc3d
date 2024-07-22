@@ -16,7 +16,7 @@ var pulseValue = 0.005;
 
 const bloomParams = {
   threshold: 0,
-  strength: 1,
+  strength: 0.9,
   radius: 0.25,
   exposure: 1,
 };
@@ -37,7 +37,9 @@ const PULSE_MIN = 1;
 const PULSE_MAX = 1.25;
 
 const CEILING_THRESHOLD = 2.7; // height to delineate upstairs from downstairs
+
 const geoSphere = new THREE.SphereGeometry(0.2, 32, 16);
+
 const materials = {
   green1: new THREE.LineBasicMaterial({ color: 0x03a062 }),
   green2: new THREE.LineBasicMaterial({ color: 0x41a003 }),
