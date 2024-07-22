@@ -7,7 +7,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
 var scene, camera, composer, renderer, labelRenderer, controls;
-var groupPivot, roomGeometry, roomJson;
+var groupPivot, roomGeometry, nodesJson, roomJson;
 
 var trackingSpheres = [];
 
@@ -45,10 +45,9 @@ const materials = {
 };
 
 const trackerMaterials = [
-  new THREE.MeshPhongMaterial({ emissive: 0xff2c04 }),
-  new THREE.MeshPhongMaterial({ emissive: 0x2c2cff }),
-  new THREE.MeshPhongMaterial({ emissive: 0x663399 }),
-  new THREE.MeshPhongMaterial({ emissive: 0x41ff04 }),
+  new THREE.MeshPhongMaterial({ emissive: 0xff0000 }),
+  new THREE.MeshPhongMaterial({ emissive: 0xffbb00 }),
+  new THREE.MeshPhongMaterial({ emissive: 0xffee00 }),
 ];
 
 var trackerLabels = [];
@@ -57,8 +56,13 @@ var trackerLabels = [];
 //
 
 async function initConfig() {
-  var url = "/api/floors";
-  fetch(url)
+  fetch("/api/nodes")
+  .then((response) => response.json())
+  .then((json) => {
+    console.log(json);
+    nodesJson = json;
+
+    fetch("/api/floors")
     .then((response) => response.json())
     .then((json) => {
       console.log(json);
@@ -67,6 +71,10 @@ async function initConfig() {
       initEvents();
       render();
     });
+
+  });
+
+
 }
 
 await initConfig();
@@ -238,6 +246,23 @@ function initScene() {
   roomGeometry.forEach((room3d) => {
     room3d.position.set(-X_POS_ADJ, -Y_POS_ADJ, 0);
     groupPivot.add(room3d);
+  });
+
+  
+  nodesJson.forEach((node) => {
+    console.log(node.name);
+
+    if (!node.enabled || !node.stationary)
+      return;
+
+    var midPointLight = new THREE.PointLight( 0x3333ff, 1, 0.1);
+    midPointLight.add(
+      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0x3333ff }))
+    );
+
+    midPointLight.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
+    groupPivot.add(midPointLight);
+
   });
 
   var bbox = new THREE.Box3().setFromObject(groupPivot);

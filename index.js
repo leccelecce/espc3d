@@ -12,8 +12,8 @@ var mqttOutput;
 var sendInterval = 2500;
 
 var mqttClient;
-var espConfig;
-var mqttConfig, floorsConfig;
+var espCompanionConfig;
+var mqttConfig, floorsConfig, nodesConfig;
 
 axios.defaults.baseURL = espCompanionAPI;
 axios.defaults.headers.post["Content-Type"] = "application/json";
@@ -40,6 +40,12 @@ app.get("/api/floors", (req, res) => {
   log(req);
 
   res.status(200).json(floorsConfig);
+});
+
+app.get("/api/nodes", (req, res) => {
+  log(req);
+
+  res.status(200).json(nodesConfig);
 });
 
 function sendServerSendEvent(req, res) {
@@ -84,10 +90,11 @@ function log(req) {
 
 async function initConfig() {
   try {
-    espConfig = await axios({ url: "/state/config" });
-    espConfig = espConfig.data;
-    mqttConfig = espConfig.mqtt;
-    floorsConfig = espConfig.floors;
+    espCompanionConfig = await axios({ url: "/state/config" });
+    espCompanionConfig = espCompanionConfig.data;
+    mqttConfig = espCompanionConfig.mqtt;
+    floorsConfig = espCompanionConfig.floors;
+    nodesConfig = espCompanionConfig.nodes;
   } catch (error) {
     console.error(error);
   }
