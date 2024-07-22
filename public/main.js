@@ -21,6 +21,10 @@ const bloomParams = {
   exposure: 1,
 };
 
+// note these are subtracted
+const X_POS_ADJ = 1.5;
+const Y_POS_ADJ = 5;
+
 const PULSE_MIN = 1;
 const PULSE_MAX = 1.25;
 
@@ -91,7 +95,7 @@ function updateTracker(updateData) {
       );
 
       newSphere.name = trackName;
-      newSphere.position.set(tracker.x - 12, tracker.y - 10, tracker.z);
+      newSphere.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
 
       trackingSpheres.push(newSphere);
       groupPivot.add(newSphere);
@@ -106,14 +110,14 @@ function updateTracker(updateData) {
       labelDiv.style.marginTop = '-1em';
       var labelElement = new CSS2DObject( labelDiv );
       labelElement.name = trackName + '#label';
-      labelElement.position.set(tracker.x - 12, tracker.y - 10, tracker.z); // copied from above
+      labelElement.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z); // copied from above
       groupPivot.add(labelElement);
 
       trackingObjectLabel = scene.getObjectByName(trackName + '#label', true);
       
     }
-    trackingObject.position.set(tracker.x - 12, tracker.y - 10, tracker.z);
-    trackingObjectLabel.position.set(tracker.x - 12, tracker.y - 10, tracker.z);
+    trackingObject.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
+    trackingObjectLabel.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
   }
 }
 
@@ -208,7 +212,7 @@ function initScene() {
   });
 
   roomGeometry.forEach((room3d) => {
-    room3d.position.set(-12, -10, 0);
+    room3d.position.set(-X_POS_ADJ, -Y_POS_ADJ, 0);
     groupPivot.add(room3d);
   });
 
