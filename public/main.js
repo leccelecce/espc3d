@@ -21,9 +21,17 @@ const bloomParams = {
   exposure: 1,
 };
 
+// starting position adjustments
 // note these are subtracted
 const X_POS_ADJ = 1.5;
 const Y_POS_ADJ = 5;
+
+const CAM_START_X = 0;
+const CAM_START_Y = 0;
+const CAM_START_Z = 23;
+
+const CONTROLS_MIN_DISTANCE = 15;
+const CONTROLS_MAX_DISTANCE = 40;
 
 const PULSE_MIN = 1;
 const PULSE_MAX = 1.25;
@@ -144,8 +152,8 @@ function initScene() {
 
   controls = new OrbitControls(camera, labelRenderer.domElement);
   controls.enableDamping = true;
-  controls.minDistance = 25;
-  controls.maxDistance = 50;
+  controls.minDistance = CONTROLS_MIN_DISTANCE;
+  controls.maxDistance = CONTROLS_MAX_DISTANCE;
 
   const renderScene = new RenderPass(scene, camera);
 
@@ -219,7 +227,7 @@ function initScene() {
   groupPivot.rotation.x = 5.2;
   groupPivot.rotation.z = 10.2;
 
-  camera.position.set(0, 0, 23);
+  camera.position.set(CAM_START_X, CAM_START_Y, CAM_START_Z);
   controls.update();
 
   window.addEventListener("resize", onWindowResize);
