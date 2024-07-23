@@ -38,7 +38,7 @@ const CONTROLS_MAX_DISTANCE = 40;
 const PULSE_MIN = 1;
 const PULSE_MAX = 1.25;
 
-const CEILING_THRESHOLD = 2.7; // height to delineate upstairs from downstairs
+const CEILING_THRESHOLD = 12.7; // height to delineate upstairs from downstairs
 
 const geoSphere = new THREE.SphereGeometry(0.2, 32, 16);
 
