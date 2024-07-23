@@ -9,6 +9,8 @@ This repo is a fork of the excellent https://github.com/hdurdle/espc3d, tweaked 
 5. Bloom effect slightly redued
 6. Various other minor tweaks
 
+TODO: fix limit of 3 trackers, lookup friendly device names, explore showing a recent path ofdevice  movement, add GUI for live view changes, externalise more settings
+
 ![Screenshot](https://github.com/leccelecce/espc3d/blob/fd5e1d89452360631cc0b065ca4cf0a92218b327/screenshot.png)
 
 # ESPresense-companion 3D
