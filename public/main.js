@@ -108,6 +108,14 @@ function updateTracker(updateData) {
     // find the tracking object
     var trackingObject = scene.getObjectByName(trackName, true);
     var trackingObjectLabel = scene.getObjectByName(trackName + '#label', true);
+
+    // if we have an object, but the confidence has dropped to <= 1, remove it
+    if (tracker.confidence <= 1) {
+      if (trackingObject)
+        scene.remove(trackingObject);
+      continue;
+    }
+
     if (!trackingObject) {
       var color = trackerMaterials[trackingSpheres.length + 1].color;
 
