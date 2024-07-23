@@ -5,10 +5,11 @@ This repo is a fork of the excellent https://github.com/hdurdle/espc3d, tweaked 
 1. Detected devices now have labels for name, % confidence and # of fixes
 2. Devices are not displayed if the confidence is <= 1 (normally means too few fixes to be remotely accurate)
 3. Nodes are displayed along with their name
-4. Bloom effect slightly redued
-5. Various other minor tweaks
+4. Floors are lightly shaded for improving the display of multi-floor buildings
+5. Bloom effect slightly redued
+6. Various other minor tweaks
 
-![Screenshot](https://github.com/leccelecce/espc3d/blob/9bb3a3b349124ae0753208ab467b0f25c93a1acc/screenshot.png)
+![Screenshot](https://github.com/leccelecce/espc3d/blob/fd5e1d89452360631cc0b065ca4cf0a92218b327/screenshot.png)
 
 # ESPresense-companion 3D
 
