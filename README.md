@@ -1,3 +1,13 @@
+# This is a fork
+
+This repo is a fork of the excellent https://github.com/hdurdle/espc3d, tweaked for personal use.
+
+1. Detected devices now have labels for name, % confidence and # of fixes
+2. Nodes are displayed along with their name
+3. Bloom effect slightly redued
+4. Various other minor tweaks
+
+
 # ESPresense-companion 3D
 
 This app pulls data from the excellent [ESPresense-companion](https://github.com/ESPresense/ESPresense-companion) and renders a fully rotatable, zoomable 3D model complete with objects representing where your objects are located.
