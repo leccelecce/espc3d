@@ -18,7 +18,7 @@ var pulseValue = 0.005;
 
 const bloomParams = {
   threshold: 0,
-  strength: 0.9,
+  strength: 0.95,
   radius: 0.25,
   exposure: 1,
 };
