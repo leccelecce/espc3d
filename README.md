@@ -3,9 +3,10 @@
 This repo is a fork of the excellent https://github.com/hdurdle/espc3d, tweaked for personal use.
 
 1. Detected devices now have labels for name, % confidence and # of fixes
-2. Nodes are displayed along with their name
-3. Bloom effect slightly redued
-4. Various other minor tweaks
+2. Devices are not displayed if the confidence is <= 1 (normally means too few fixes to be remotely accurate)
+3. Nodes are displayed along with their name
+4. Bloom effect slightly redued
+5. Various other minor tweaks
 
 ![Screenshot](https://github.com/leccelecce/espc3d/blob/9bb3a3b349124ae0753208ab467b0f25c93a1acc/screenshot.png)
 
