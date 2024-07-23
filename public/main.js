@@ -38,14 +38,10 @@ const CONTROLS_MAX_DISTANCE = 40;
 const PULSE_MIN = 1;
 const PULSE_MAX = 1.25;
 
-const CEILING_THRESHOLD = 12.7; // height to delineate upstairs from downstairs
-
 const geoSphere = new THREE.SphereGeometry(0.2, 32, 16);
 
 const materials = {
   green1: new THREE.LineBasicMaterial({ color: 0x03a062 }),
-  green2: new THREE.LineBasicMaterial({ color: 0x41a003 }),
-  brown: new THREE.LineBasicMaterial({ color: 0x7b403b }),
 };
 
 const trackerMaterials = [
@@ -253,13 +249,7 @@ function initScene() {
 
       var lines = new THREE.BufferGeometry().setFromPoints(points3d);
 
-      if (floor_base > CEILING_THRESHOLD) {
-        if (room.name != "") {
-          roomGeometry.push(new THREE.Line(lines, materials.green2));
-        }
-      } else {
-          roomGeometry.push(new THREE.Line(lines, materials.green1));
-      }
+      roomGeometry.push(new THREE.Line(lines, materials.green1));
 
       // fill in the floor
       // first adjust to the right location
