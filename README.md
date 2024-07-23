@@ -7,6 +7,7 @@ This repo is a fork of the excellent https://github.com/hdurdle/espc3d, tweaked 
 3. Bloom effect slightly redued
 4. Various other minor tweaks
 
+![Screenshot](https://github.com/leccelecce/espc3d/blob/9bb3a3b349124ae0753208ab467b0f25c93a1acc/screenshot.png)
 
 # ESPresense-companion 3D
 
