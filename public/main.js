@@ -54,6 +54,8 @@ const trackerMaterials = [
   new THREE.MeshPhongMaterial({ emissive: 0xffee00 }),
 ];
 
+const floorMaterial = new THREE.MeshBasicMaterial( {color: 0x03a062, side: THREE.DoubleSide, opacity: 0.03, transparent: true} );
+
 var trackerLabels = [];
 
 //
@@ -233,12 +235,18 @@ function initScene() {
       console.log(room.name);
 
       var points3d = [];
+      var pointsFloor = [];
+
       room.points.forEach((points) => {
         points3d.push(new THREE.Vector3(points[0], points[1], floor_base));
         points3d.push(new THREE.Vector3(points[0], points[1], floor_ceiling));
         points3d.push(new THREE.Vector3(points[0], points[1], floor_base));
+
+        // for floor drawing
+        pointsFloor.push(new THREE.Vector3(points[0], points[1], floor_base));
       });
 
+      // this draws the ceiling
       room.points.forEach((points) => {
         points3d.push(new THREE.Vector3(points[0], points[1], floor_ceiling));
       });
@@ -250,17 +258,35 @@ function initScene() {
           roomGeometry.push(new THREE.Line(lines, materials.green2));
         }
       } else {
-        roomGeometry.push(new THREE.Line(lines, materials.green1));
+          roomGeometry.push(new THREE.Line(lines, materials.green1));
       }
+
+      // fill in the floor
+      // first adjust to the right location
+      pointsFloor.forEach((points) => {
+        points.x = points.x + (-X_POS_ADJ);
+        points.y = points.y + (-Y_POS_ADJ);
+      });
+
+      var floorShape = new THREE.Shape(pointsFloor);
+      var floorGeometry = new THREE.ShapeGeometry(floorShape);
+      var plane = new THREE.Mesh(floorGeometry, floorMaterial);
+
+      // need to raise up the 2D shape
+      plane.position.z = floor_base;
+
+      groupPivot.add(plane);
+
     });
   });
 
+  // move everything by the X,Y adjustment
   roomGeometry.forEach((room3d) => {
     room3d.position.set(-X_POS_ADJ, -Y_POS_ADJ, 0);
     groupPivot.add(room3d);
   });
 
-  
+  // add markers for the nodes
   nodesJson.forEach((node) => {
     console.log(node.name);
 
@@ -279,6 +305,7 @@ function initScene() {
 
   });
 
+  // optionally show the default camera focus point
   if (showMidPointLight) {
     var bbox = new THREE.Box3().setFromObject(groupPivot);
 
