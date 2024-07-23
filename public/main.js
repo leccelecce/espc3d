@@ -9,6 +9,8 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 var scene, camera, composer, renderer, labelRenderer, controls;
 var groupPivot, roomGeometry, nodesJson, roomJson;
 
+var showMidPointLight = false;
+
 var trackingSpheres = [];
 
 var pulse = 1;
@@ -267,19 +269,21 @@ function initScene() {
 
   });
 
-  var bbox = new THREE.Box3().setFromObject(groupPivot);
+  if (showMidPointLight) {
+    var bbox = new THREE.Box3().setFromObject(groupPivot);
 
-  var bboxMidPoint = new THREE.Vector3();
-  bboxMidPoint.lerpVectors(bbox.min, bbox.max, 0.5);
+    var bboxMidPoint = new THREE.Vector3();
+    bboxMidPoint.lerpVectors(bbox.min, bbox.max, 0.5);
 
-  // add a point in the middle of the bounding box i.e. what we'll be rotating around for debug reference
-  var midPointLight = new THREE.PointLight( 0xffffff, 1, 0.1);
-  midPointLight.add(
-    new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0xffffff }))
-  );
+    // add a point in the middle of the bounding box i.e. what we'll be rotating around for debug reference
+    var midPointLight = new THREE.PointLight( 0xffffff, 1, 0.1);
+    midPointLight.add(
+      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0xffffff }))
+    );
 
-  midPointLight.position.set(bboxMidPoint.x, bboxMidPoint.y, 0);
-  groupPivot.add(midPointLight);
+    midPointLight.position.set(bboxMidPoint.x, bboxMidPoint.y, 0);
+    groupPivot.add(midPointLight);
+  }
 
   groupPivot.rotation.x = 5.2;
   groupPivot.rotation.z = 10.2;
