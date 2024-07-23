@@ -257,9 +257,9 @@ function initScene() {
     if (!node.enabled || !node.stationary)
       return;
 
-    var midPointLight = new THREE.PointLight( 0x3333ff, 1, 0.1);
+    var midPointLight = new THREE.PointLight( 0x5555ff, 1, 0.1);
     midPointLight.add(
-      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0x3333ff }))
+      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0x5555ff }))
     );
 
     midPointLight.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
