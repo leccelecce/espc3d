@@ -267,6 +267,8 @@ function initScene() {
     midPointLight.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
     groupPivot.add(midPointLight);
 
+    createLabelForNode(node, groupPivot);
+
   });
 
   if (showMidPointLight) {
@@ -292,6 +294,25 @@ function initScene() {
   controls.update();
 
   window.addEventListener("resize", onWindowResize);
+}
+
+function createLabelForNode(node, groupPivot) {
+  var labelDivEle = document.createElement( 'div' );
+  labelDivEle.style.color = '#6666ff';
+  labelDivEle.style.fontFamily = 'Arial';
+  labelDivEle.style.fontSize = '0.8rem;';
+  labelDivEle.style.marginTop = '-1em';
+  
+  var labelDivLine1 = document.createElement( 'div' );
+  labelDivLine1.textContent = `${node.name}`;
+  
+  labelDivEle.append(labelDivLine1);
+
+  var labelElement = new CSS2DObject( labelDivEle );
+  labelElement.name = node.name + '#label';
+  labelElement.position.set(node.point[0] - X_POS_ADJ, node.point[1] - Y_POS_ADJ, node.point[2]);
+
+  groupPivot.add(labelElement);
 }
 
 function onWindowResize() {
