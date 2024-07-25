@@ -6,10 +6,12 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
+var nodesJson, roomJson;
 var scene, camera, composer, renderer, labelRenderer, controls;
-var groupPivot, roomGeometry, nodesJson, roomJson;
+var groupPivot, roomGeometry;
 
 var showMidPointLight = false;
+var updateTrackingEnabled = true;
 
 var trackingSpheres = [];
 
@@ -53,6 +55,90 @@ const trackerMaterials = [
 const floorMaterial = new THREE.MeshBasicMaterial( {color: 0x03a062, side: THREE.DoubleSide, opacity: 0.03, transparent: true} );
 
 var trackerLabels = [];
+var labelElements = [];
+var nodeList = [];
+
+setInterval(reloadConfig, 5000);
+
+async function reloadConfig() {
+  fetch("/api/nodes")
+  .then((response) => response.json())
+  .then((json) => {
+    //console.log(json);
+    nodesJson = json;
+
+    fetch("/api/floors")
+    .then((response) => response.json())
+    .then((json) => {
+      //console.log(json);
+      roomJson = json;
+
+      // PAUSE receiving message updates, as these will operate on the Scene global
+      updateTrackingEnabled = false;
+
+      deleteScene();// extra function to delete what's currently there
+      initScene();// we do need to refresh the scene
+
+      updateTrackingEnabled = true;
+
+      //initEvents(); // we don't need to resubscribe to the EventSource
+      //render(); // we don't need to re-render and start the event loop as the browser is doing this anyway
+    });
+
+  });
+
+}
+
+function deleteScene() {
+
+  nodeList.forEach(node => {
+    node.children.forEach(c => {
+      node.remove(c);
+    }
+  )
+  }
+);
+
+  nodeList.length = 0;
+
+  var eles = document.getElementsByClassName("nodeLabel");
+  while(eles.length > 0){
+    eles[0].parentNode.removeChild(eles[0]);
+}
+
+
+  labelElements.forEach(labelEle => { labelEle.remove(); });
+
+  trackerLabels.forEach(label => {label.clear()});
+  trackerLabels.length = 0;
+
+  trackingSpheres.forEach(item => {item.remove();});
+  trackingSpheres.length = 0;
+
+  roomGeometry.length = 0;
+
+  groupPivot.children.forEach(child => {
+    console.log("Child: " + typeof child);
+    groupPivot.remove(child)
+  });
+
+  groupPivot.clear();// remove all child objects
+  scene.clear();
+
+  composer.dispose();
+
+  renderer.clear();// clear color, depth and stencil drawing buffer
+  renderer.dispose();// Frees the GPU-related resources allocated by this instance
+  //renderer.resetState();
+  renderer.forceContextLoss();// necessary to avoid "too many active contexts" in Chrome
+  //labelRenderer.clear();
+
+  document.getElementsByTagName("body")[0].innerHTML = '';
+
+// scene, camera, composer, renderer, labelRenderer, controls;
+// groupPivot, roomGeometry;
+  
+}
 
 //
 //
@@ -61,13 +147,13 @@ async function initConfig() {
   fetch("/api/nodes")
   .then((response) => response.json())
   .then((json) => {
-    console.log(json);
+    //console.log(json);
     nodesJson = json;
 
     fetch("/api/floors")
     .then((response) => response.json())
     .then((json) => {
-      console.log(json);
+      //console.log(json);
       roomJson = json;
       initScene();
       initEvents();
@@ -99,6 +185,9 @@ function initEvents() {
 }
 
 function updateTracker(updateData) {
+  if (!updateTrackingEnabled)
+    return;
+
   for (let key in updateData) {
     const tracker = updateData[key];
     var trackName = tracker.name;
@@ -222,13 +311,13 @@ function initScene() {
   scene.add(groupPivot);
 
   roomJson.forEach((floor) => {
-    console.log(floor.name);
+    //console.log(floor.name);
 
     var floor_base = floor.bounds[0][2];
     var floor_ceiling = floor.bounds[1][2];
 
     floor.rooms.forEach((room) => {
-      console.log(room.name);
+      //console.log(room.name);
 
       var points3d = [];
       var pointsFloor = [];
@@ -289,9 +378,12 @@ function initScene() {
     );
 
     midPointLight.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
-    groupPivot.add(midPointLight);
 
-    createLabelForNode(node, groupPivot);
+    midPointLight.add(createLabelForNode(node))
+
+    nodeList.push(midPointLight);
+
+    groupPivot.add(midPointLight);
 
   });
 
@@ -307,7 +399,7 @@ function initScene() {
     midPointLight.add(
       new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0xffffff }))
     );
-
+    
     midPointLight.position.set(bboxMidPoint.x, bboxMidPoint.y, 0);
     groupPivot.add(midPointLight);
   }
@@ -321,12 +413,13 @@ function initScene() {
   window.addEventListener("resize", onWindowResize);
 }
 
-function createLabelForNode(node, groupPivot) {
+function createLabelForNode(node) {
   var labelDivEle = document.createElement( 'div' );
   labelDivEle.style.color = '#6666ff';
   labelDivEle.style.fontFamily = 'Arial';
   labelDivEle.style.fontSize = '0.8rem;';
   labelDivEle.style.marginTop = '-1em';
+  labelDivEle.classList = "nodeLabel";
   
   var labelDivLine1 = document.createElement( 'div' );
   labelDivLine1.textContent = `${node.name}`;
@@ -335,9 +428,8 @@ function createLabelForNode(node, groupPivot) {
 
   var labelElement = new CSS2DObject( labelDivEle );
   labelElement.name = node.name + '#label';
-  labelElement.position.set(node.point[0] - X_POS_ADJ, node.point[1] - Y_POS_ADJ, node.point[2]);
 
-  groupPivot.add(labelElement);
+  return labelElement;
 }
 
 function onWindowResize() {
