@@ -16,6 +16,7 @@ TODO:
 4. explore showing a recent path of device movement
 5. add GUI for live view changes
 6. externalise more settings
+7. if nodes are disabled/not running, reflect this visually
 
 ![Screenshot](https://github.com/leccelecce/espc3d/blob/fd5e1d89452360631cc0b065ca4cf0a92218b327/screenshot.png)
 
