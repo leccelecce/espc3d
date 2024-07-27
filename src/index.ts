@@ -14,7 +14,7 @@ var mqttClient: MqttClient;
 var espCompanionConfig: EspCompanionConfig;
 var mqttConfig: MqttConfig, floorsConfig: string, nodesConfig: string;
 
-axios.defaults.baseURL = espCompanionAPI;DDDDDDDD
+axios.defaults.baseURL = espCompanionAPI;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 type EspCompanionConfig = {
