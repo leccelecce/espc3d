@@ -11,11 +11,12 @@ This repo is a fork of the excellent https://github.com/hdurdle/espc3d, tweaked 
 
 TODO: 
 1. fix limit of 3 tracked devices (just need more colours, or use a single colour)
-2. enable manually triggered or automated refresh of map/node layout from Companion
-3. lookup friendly device names if set (available on mqtt)
-4. explore showing a recent path of device movement
-5. add GUI for live view changes
-6. externalise more settings
+2. display room names (optionally)
+3. enable manually triggered or automated refresh of map/node layout from Companion
+4. lookup friendly device names if set (available on mqtt)
+5. explore showing a recent path of device movement
+6. add GUI for live view changes
+7. externalise more settings
 
 ![Screenshot](https://github.com/leccelecce/espc3d/blob/fd5e1d89452360631cc0b065ca4cf0a92218b327/screenshot.png)
 
