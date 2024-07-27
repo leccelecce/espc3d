@@ -50,6 +50,11 @@ const trackerMaterials = [
   new THREE.MeshPhongMaterial({ emissive: 0xffee00 }),
 ];
 
+const nodeMaterials = {
+  online: new THREE.MeshPhongMaterial({ emissive: 0x5555ff }),
+  offline: new THREE.MeshPhongMaterial({ emissive: 0xff2222 }),
+}
+
 const floorMaterial = new THREE.MeshBasicMaterial( {color: 0x03a062, side: THREE.DoubleSide, opacity: 0.03, transparent: true} );
 
 var trackerLabels = [];
@@ -94,11 +99,37 @@ function initEvents() {
     false
   );
   source.onmessage = function (e) {
-    updateTracker(JSON.parse(e.data));
+    const message = JSON.parse(e.data);
+    updateTrackers(message.trackers);
+    updateNodes(message.nodeStates);
   };
 }
 
-function updateTracker(updateData) {
+function updateNodes(updateData) {
+  for (let key in updateData) {
+    const nodeName = key;
+    const status = updateData[key];
+
+    var nodeObject = scene.getObjectByName("node#" + nodeName);
+
+    if (!nodeObject) {
+      continue;
+    }
+
+    var nodeObjectLabel = nodeObject.getObjectByName("nodeLabel", true);
+
+    if (status == "online") {
+      nodeObject.children[0].material = nodeMaterials['online'];
+      nodeObjectLabel.element.style.color = '#5555ff';
+    } else {
+      nodeObject.children[0].material = nodeMaterials['offline'];
+      nodeObjectLabel.element.style.color = '#dc2d2d';
+    }
+
+  }
+}
+
+function updateTrackers(updateData) {
   for (let key in updateData) {
     const tracker = updateData[key];
     var trackName = tracker.name;
@@ -222,13 +253,13 @@ function initScene() {
   scene.add(groupPivot);
 
   roomJson.forEach((floor) => {
-    console.log(floor.name);
+    console.log("Floor: " + floor.name);
 
     var floor_base = floor.bounds[0][2];
     var floor_ceiling = floor.bounds[1][2];
 
     floor.rooms.forEach((room) => {
-      console.log(room.name);
+      console.log("Room: " + room.name);
 
       var points3d = [];
       var pointsFloor = [];
@@ -278,20 +309,23 @@ function initScene() {
 
   // add markers for the nodes
   nodesJson.forEach((node) => {
-    console.log(node.name);
+    console.log("Node: " + node.name + " " + node.id);
 
     if (!node.enabled || !node.stationary)
       return;
 
-    var midPointLight = new THREE.PointLight( 0x5555ff, 1, 0.1);
-    midPointLight.add(
-      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0x5555ff }))
+    var nodeObject = new THREE.PointLight( 0x2222ff, 1, 0.1);
+    nodeObject.add(
+      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), nodeMaterials['offline'])
     );
 
-    midPointLight.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
-    groupPivot.add(midPointLight);
+    nodeObject.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
 
-    createLabelForNode(node, groupPivot);
+    nodeObject.name = "node#" + node.id;
+
+    nodeObject.add(createLabelForNode(node))
+
+    groupPivot.add(nodeObject);
 
   });
 
@@ -321,9 +355,9 @@ function initScene() {
   window.addEventListener("resize", onWindowResize);
 }
 
-function createLabelForNode(node, groupPivot) {
+function createLabelForNode(node) {
   var labelDivEle = document.createElement( 'div' );
-  labelDivEle.style.color = '#6666ff';
+  labelDivEle.style.color = '#dc2d2d';
   labelDivEle.style.fontFamily = 'Arial';
   labelDivEle.style.fontSize = '0.8rem;';
   labelDivEle.style.marginTop = '-1em';
@@ -334,10 +368,9 @@ function createLabelForNode(node, groupPivot) {
   labelDivEle.append(labelDivLine1);
 
   var labelElement = new CSS2DObject( labelDivEle );
-  labelElement.name = node.name + '#label';
-  labelElement.position.set(node.point[0] - X_POS_ADJ, node.point[1] - Y_POS_ADJ, node.point[2]);
+  labelElement.name = "nodeLabel";
 
-  groupPivot.add(labelElement);
+  return labelElement;
 }
 
 function onWindowResize() {

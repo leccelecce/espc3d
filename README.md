@@ -4,7 +4,7 @@ This repo is a fork of the excellent https://github.com/hdurdle/espc3d, tweaked 
 
 1. Detected devices now have labels for name, % confidence and # of fixes
 2. Devices are not displayed if the confidence is <= 1 (normally means too few fixes to be remotely accurate)
-3. Nodes are displayed along with their name
+3. Nodes are displayed along with their name, and online/offline status
 4. Floors are lightly shaded for improving the display of multi-floor buildings
 5. Bloom effect slightly redued
 6. Various other minor tweaks
@@ -16,7 +16,6 @@ TODO:
 4. explore showing a recent path of device movement
 5. add GUI for live view changes
 6. externalise more settings
-7. if nodes are disabled/not running, reflect this visually
 
 ![Screenshot](https://github.com/leccelecce/espc3d/blob/fd5e1d89452360631cc0b065ca4cf0a92218b327/screenshot.png)
 

@@ -19,6 +19,7 @@ axios.defaults.baseURL = espCompanionAPI;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 var trackers = {};
+var nodeStates = {};
 
 async function main() {
   await initConfig();
@@ -65,10 +66,12 @@ function sendServerSendEvent(req, res) {
 }
 
 function writeServerSendEvent(res, sseId) {
-  const data = `data: ${JSON.stringify(trackers)}\n\n`;
+  const obj = {nodeStates: nodeStates, trackers: trackers};
+  const data = `data: ${JSON.stringify(obj)}\n\n`;
   res.write("id: " + sseId + "\n");
   res.write(data);
 }
+
 app.get("/updates", (req, res) => {
   log(req);
   if (req.headers.accept && req.headers.accept == "text/event-stream") {
@@ -113,7 +116,7 @@ function initMQTT() {
 
   mqttClient.on("connect", () => {
     console.log("Connected to mqtt");
-    mqttClient.subscribe("espresense/companion/#", (err) => {
+    mqttClient.subscribe(["espresense/companion/#", "espresense/rooms/+/status"], (err) => {
       if (!err) {
         console.log("Subscribed");
       }
@@ -121,6 +124,11 @@ function initMQTT() {
   });
 
   mqttClient.on("message", (topic, message) => {
+    if (topic.startsWith("espresense/rooms/") && topic.endsWith("/status")) {
+      var fields = topic.split("/");
+      var nodeName = fields[2];
+      nodeStates[nodeName] = message.toString();
+    }
     if (topic.includes("attributes")) {
       var fields = topic.split("/");
       var trackName = fields[2];
