@@ -9,7 +9,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/index.js",
+            "program": "${workspaceFolder}/build/index.js",
+            "preLaunchTask": "tsc: watch - tsconfig.json",
             "envFile": "${workspaceFolder}/.env.development.local"
         }
     ]
