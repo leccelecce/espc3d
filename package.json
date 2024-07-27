@@ -13,8 +13,5 @@
     "express": "^4.19.2",
     "mqtt": "^5.3.5",
     "three": "^0.166.1"
-  },
-  "devDependencies": {
-    "vite": "^5.1.1"
   }
 }
