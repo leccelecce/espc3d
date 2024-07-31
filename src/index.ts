@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.ESPC3D_PORT || 3001;
 const espCompanionAPI = process.env.ESPC3D_API || "";
 
-var sendInterval = 2500;
+var sendInterval: number = 2500;
 
 var mqttClient: MqttClient;
 var espCompanionConfig: EspCompanionConfig;
@@ -137,12 +137,12 @@ function initMQTT() {
 
   mqttClient.on("message", (topic: string, message: Buffer) => {
     if (topic.startsWith("espresense/rooms/") && topic.endsWith("/status")) {
-      var fields = topic.split("/");
+      var fields: string[] = topic.split("/");
       var nodeName = fields[2];
       nodeStates[nodeName] = message.toString();
     }
     if (topic.includes("attributes")) {
-      var fields = topic.split("/");
+      var fields: string[] = topic.split("/");
       var trackName = fields[2];
 
       var mqttOutput = JSON.parse(message.toString());
