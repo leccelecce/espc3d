@@ -5,6 +5,7 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 var scene, camera, composer, renderer, labelRenderer, controls;
 var groupPivot, roomGeometry, nodesJson, roomJson;
@@ -21,6 +22,10 @@ const bloomParams = {
   strength: 0.95,
   radius: 0.25,
   exposure: 1,
+};
+
+const effectController = {
+  showNodes: true
 };
 
 // starting position adjustments
@@ -308,26 +313,12 @@ function initScene() {
   });
 
   // add markers for the nodes
-  nodesJson.forEach((node) => {
-    console.log("Node: " + node.name + " " + node.id);
+  if (effectController.showNodes) {
 
-    if (!node.enabled || !node.stationary)
-      return;
+    var nodeGroup = createNodes();
 
-    var nodeObject = new THREE.PointLight( 0x2222ff, 1, 0.1);
-    nodeObject.add(
-      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), nodeMaterials['offline'])
-    );
-
-    nodeObject.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
-
-    nodeObject.name = "node#" + node.id;
-
-    nodeObject.add(createLabelForNode(node))
-
-    groupPivot.add(nodeObject);
-
-  });
+    groupPivot.add(nodeGroup);
+  }
 
   // optionally show the default camera focus point
   if (showMidPointLight) {
@@ -352,7 +343,39 @@ function initScene() {
   camera.position.set(CAM_START_X, CAM_START_Y, CAM_START_Z);
   controls.update();
 
+  doGuiSetup();
+
   window.addEventListener("resize", onWindowResize);
+}
+
+function createNodes() {
+
+  const nodeGroup = new THREE.Group();
+  nodeGroup.name = 'NodeGroup';
+
+  nodesJson.forEach((node) => {
+    console.log("Node: " + node.name + " " + node.id);
+
+    if (!node.enabled || !node.stationary)
+      return;
+
+    var nodeObject = new THREE.PointLight( 0x2222ff, 1, 0.1);
+    nodeObject.add(
+      new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), nodeMaterials['offline'])
+    );
+
+    nodeObject.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
+
+    nodeObject.name = "node#" + node.id;
+
+    nodeObject.add(createLabelForNode(node))
+
+    nodeGroup.add(nodeObject);
+
+  });
+
+  return nodeGroup;
+
 }
 
 function createLabelForNode(node) {
@@ -371,6 +394,31 @@ function createLabelForNode(node) {
   labelElement.name = "nodeLabel";
 
   return labelElement;
+}
+
+function doGuiSetup() {
+
+  const removeNodes = function() {
+    var nodeGroup = scene.getObjectByName("NodeGroup");
+    removeObjectsWithChildren(nodeGroup);
+  }
+
+  const addNodes = function() {
+    groupPivot.add(createNodes());
+  }
+
+  const nodeChanger = function() {
+    if (effectController.showNodes) {
+      addNodes();
+    } else {
+      removeNodes();
+    }
+  };
+
+  const gui = new GUI();
+
+  gui.add(effectController, 'showNodes', true ).onChange(nodeChanger);
+
 }
 
 function onWindowResize() {
@@ -402,4 +450,52 @@ function render() {
   composer.render();
 
   requestAnimationFrame(render);
+}
+
+// https://stackoverflow.com/a/73827012
+function removeObjectsWithChildren(obj) {
+
+  if (!obj)
+    return;
+
+  if(obj.children.length > 0){
+      for (var x = obj.children.length - 1; x>=0; x--){
+          removeObjectsWithChildren( obj.children[x]);
+      }
+  }
+
+  if (obj.geometry) {
+      obj.geometry.dispose();
+  }
+
+  if (obj.material) {
+      if (obj.material.length) {
+          for (let i = 0; i < obj.material.length; ++i) {
+
+
+              if (obj.material[i].map) obj.material[i].map.dispose();
+              if (obj.material[i].lightMap) obj.material[i].lightMap.dispose();
+              if (obj.material[i].bumpMap) obj.material[i].bumpMap.dispose();
+              if (obj.material[i].normalMap) obj.material[i].normalMap.dispose();
+              if (obj.material[i].specularMap) obj.material[i].specularMap.dispose();
+              if (obj.material[i].envMap) obj.material[i].envMap.dispose();
+
+              obj.material[i].dispose()
+          }
+      }
+      else {
+          if (obj.material.map) obj.material.map.dispose();
+          if (obj.material.lightMap) obj.material.lightMap.dispose();
+          if (obj.material.bumpMap) obj.material.bumpMap.dispose();
+          if (obj.material.normalMap) obj.material.normalMap.dispose();
+          if (obj.material.specularMap) obj.material.specularMap.dispose();
+          if (obj.material.envMap) obj.material.envMap.dispose();
+
+          obj.material.dispose();
+      }
+  }
+
+  obj.removeFromParent();
+
+  return true;
 }
