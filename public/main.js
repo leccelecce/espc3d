@@ -26,15 +26,15 @@ const bloomParams = {
 
 const effectController = {
   showNodes: true,
-  refreshNodes: function() {
+  refreshNodes: function () {
     fetch("/api/nodes")
-    .then((response) => response.json())
-    .then((json) => {
-      console.log(json);
-      nodesJson = json;
-      removeNodes();
-      addNodes();
-    });
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+        nodesJson = json;
+        removeNodes();
+        addNodes();
+      });
   }
 };
 
@@ -70,7 +70,7 @@ const nodeMaterials = {
   offline: new THREE.MeshPhongMaterial({ emissive: 0xff2222 }),
 }
 
-const floorMaterial = new THREE.MeshBasicMaterial( {color: 0x03a062, side: THREE.DoubleSide, opacity: 0.03, transparent: true} );
+const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x03a062, side: THREE.DoubleSide, opacity: 0.03, transparent: true });
 
 var trackerLabels = [];
 
@@ -79,22 +79,22 @@ var trackerLabels = [];
 
 async function initConfig() {
   fetch("/api/nodes")
-  .then((response) => response.json())
-  .then((json) => {
-    console.log(json);
-    nodesJson = json;
-
-    fetch("/api/floors")
     .then((response) => response.json())
     .then((json) => {
       console.log(json);
-      roomJson = json;
-      initScene();
-      initEvents();
-      render();
-    });
+      nodesJson = json;
 
-  });
+      fetch("/api/floors")
+        .then((response) => response.json())
+        .then((json) => {
+          console.log(json);
+          roomJson = json;
+          initScene();
+          initEvents();
+          render();
+        });
+
+    });
 
 
 }
@@ -175,32 +175,32 @@ function updateTrackers(updateData) {
       groupPivot.add(newSphere);
       trackingObject = scene.getObjectByName(trackName, true);
 
-//
-        
-      var labelDivEle = document.createElement( 'div' );
+      //
+
+      var labelDivEle = document.createElement('div');
       labelDivEle.style.color = '#ffffff';
       labelDivEle.style.fontFamily = 'Arial';
       labelDivEle.style.fontSize = '0.8rem;';
       labelDivEle.style.marginTop = '-1em';
-      
-      var labelDivLine1 = document.createElement( 'div' );
+
+      var labelDivLine1 = document.createElement('div');
       labelDivLine1.textContent = `${trackName}`;
 
-      var labelDivLine2 = document.createElement( 'div' );
+      var labelDivLine2 = document.createElement('div');
       labelDivLine2.textContent = `${tracker.confidence}% confidence from ${tracker.fixes} fixes`;
-      
+
       labelDivEle.append(labelDivLine1, labelDivLine2);
 
       trackerLabels[trackName] = labelDivLine2;
 
-      var labelElement = new CSS2DObject( labelDivEle );
+      var labelElement = new CSS2DObject(labelDivEle);
       labelElement.name = trackName + '#label';
       labelElement.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
-      
+
       groupPivot.add(labelElement);
 
       trackingObjectLabel = scene.getObjectByName(trackName + '#label', true);
-      
+
     }
     trackingObject.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
     trackingObjectLabel.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
@@ -216,7 +216,7 @@ function initScene() {
   renderer.toneMapping = THREE.ReinhardToneMapping;
 
   labelRenderer = new CSS2DRenderer({});
-  labelRenderer.setSize( window.innerWidth, window.innerHeight );
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
   labelRenderer.domElement.style.position = 'absolute';
   labelRenderer.domElement.style.top = '0px';
 
@@ -338,7 +338,7 @@ function initScene() {
     bboxMidPoint.lerpVectors(bbox.min, bbox.max, 0.5);
 
     // add a point in the middle of the bounding box i.e. what we'll be rotating around for debug reference
-    var midPointLight = new THREE.PointLight( 0xffffff, 1, 0.1);
+    var midPointLight = new THREE.PointLight(0xffffff, 1, 0.1);
     midPointLight.add(
       new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), new THREE.MeshPhongMaterial({ emissive: 0xffffff }))
     );
@@ -369,12 +369,12 @@ function createNodes() {
     if (!node.enabled || !node.stationary)
       return;
 
-    var nodeObject = new THREE.PointLight( 0x2222ff, 1, 0.1);
+    var nodeObject = new THREE.PointLight(0x2222ff, 1, 0.1);
     nodeObject.add(
       new THREE.Mesh(new THREE.SphereGeometry(0.08, 32, 16), nodeMaterials['offline'])
     );
 
-    nodeObject.position.set(node.point[0]-X_POS_ADJ, node.point[1]-Y_POS_ADJ, node.point[2]);
+    nodeObject.position.set(node.point[0] - X_POS_ADJ, node.point[1] - Y_POS_ADJ, node.point[2]);
 
     nodeObject.name = "node#" + node.id;
 
@@ -389,18 +389,18 @@ function createNodes() {
 }
 
 function createLabelForNode(node) {
-  var labelDivEle = document.createElement( 'div' );
+  var labelDivEle = document.createElement('div');
   labelDivEle.style.color = '#dc2d2d';
   labelDivEle.style.fontFamily = 'Arial';
   labelDivEle.style.fontSize = '0.8rem;';
   labelDivEle.style.marginTop = '-1em';
-  
-  var labelDivLine1 = document.createElement( 'div' );
+
+  var labelDivLine1 = document.createElement('div');
   labelDivLine1.textContent = `${node.name}`;
-  
+
   labelDivEle.append(labelDivLine1);
 
-  var labelElement = new CSS2DObject( labelDivEle );
+  var labelElement = new CSS2DObject(labelDivEle);
   labelElement.name = "nodeLabel";
 
   return labelElement;
@@ -408,7 +408,7 @@ function createLabelForNode(node) {
 
 function doGuiSetup() {
 
-  const nodeChanger = function() {
+  const nodeChanger = function () {
     if (effectController.showNodes) {
       addNodes();
     } else {
@@ -418,8 +418,8 @@ function doGuiSetup() {
 
   const gui = new GUI();
 
-  gui.add(effectController, 'showNodes', true ).onChange(nodeChanger);
-  gui.add(effectController, 'refreshNodes' );
+  gui.add(effectController, 'showNodes', true).onChange(nodeChanger);
+  gui.add(effectController, 'refreshNodes');
 
 }
 
@@ -469,41 +469,41 @@ function removeObjectsWithChildren(obj) {
   if (!obj)
     return;
 
-  if(obj.children.length > 0){
-      for (var x = obj.children.length - 1; x>=0; x--){
-          removeObjectsWithChildren( obj.children[x]);
-      }
+  if (obj.children.length > 0) {
+    for (var x = obj.children.length - 1; x >= 0; x--) {
+      removeObjectsWithChildren(obj.children[x]);
+    }
   }
 
   if (obj.geometry) {
-      obj.geometry.dispose();
+    obj.geometry.dispose();
   }
 
   if (obj.material) {
-      if (obj.material.length) {
-          for (let i = 0; i < obj.material.length; ++i) {
+    if (obj.material.length) {
+      for (let i = 0; i < obj.material.length; ++i) {
 
 
-              if (obj.material[i].map) obj.material[i].map.dispose();
-              if (obj.material[i].lightMap) obj.material[i].lightMap.dispose();
-              if (obj.material[i].bumpMap) obj.material[i].bumpMap.dispose();
-              if (obj.material[i].normalMap) obj.material[i].normalMap.dispose();
-              if (obj.material[i].specularMap) obj.material[i].specularMap.dispose();
-              if (obj.material[i].envMap) obj.material[i].envMap.dispose();
+        if (obj.material[i].map) obj.material[i].map.dispose();
+        if (obj.material[i].lightMap) obj.material[i].lightMap.dispose();
+        if (obj.material[i].bumpMap) obj.material[i].bumpMap.dispose();
+        if (obj.material[i].normalMap) obj.material[i].normalMap.dispose();
+        if (obj.material[i].specularMap) obj.material[i].specularMap.dispose();
+        if (obj.material[i].envMap) obj.material[i].envMap.dispose();
 
-              obj.material[i].dispose()
-          }
+        obj.material[i].dispose()
       }
-      else {
-          if (obj.material.map) obj.material.map.dispose();
-          if (obj.material.lightMap) obj.material.lightMap.dispose();
-          if (obj.material.bumpMap) obj.material.bumpMap.dispose();
-          if (obj.material.normalMap) obj.material.normalMap.dispose();
-          if (obj.material.specularMap) obj.material.specularMap.dispose();
-          if (obj.material.envMap) obj.material.envMap.dispose();
+    }
+    else {
+      if (obj.material.map) obj.material.map.dispose();
+      if (obj.material.lightMap) obj.material.lightMap.dispose();
+      if (obj.material.bumpMap) obj.material.bumpMap.dispose();
+      if (obj.material.normalMap) obj.material.normalMap.dispose();
+      if (obj.material.specularMap) obj.material.specularMap.dispose();
+      if (obj.material.envMap) obj.material.envMap.dispose();
 
-          obj.material.dispose();
-      }
+      obj.material.dispose();
+    }
   }
 
   obj.removeFromParent();
