@@ -25,7 +25,17 @@ const bloomParams = {
 };
 
 const effectController = {
-  showNodes: true
+  showNodes: true,
+  refreshNodes: function() {
+    fetch("/api/nodes")
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json);
+      nodesJson = json;
+      removeNodes();
+      addNodes();
+    });
+  }
 };
 
 // starting position adjustments
@@ -398,15 +408,6 @@ function createLabelForNode(node) {
 
 function doGuiSetup() {
 
-  const removeNodes = function() {
-    var nodeGroup = scene.getObjectByName("NodeGroup");
-    removeObjectsWithChildren(nodeGroup);
-  }
-
-  const addNodes = function() {
-    groupPivot.add(createNodes());
-  }
-
   const nodeChanger = function() {
     if (effectController.showNodes) {
       addNodes();
@@ -418,7 +419,17 @@ function doGuiSetup() {
   const gui = new GUI();
 
   gui.add(effectController, 'showNodes', true ).onChange(nodeChanger);
+  gui.add(effectController, 'refreshNodes' );
 
+}
+
+function removeNodes() {
+  var nodeGroup = scene.getObjectByName("NodeGroup");
+  removeObjectsWithChildren(nodeGroup);
+}
+
+function addNodes() {
+  groupPivot.add(createNodes());
 }
 
 function onWindowResize() {
