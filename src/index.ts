@@ -58,7 +58,18 @@ app.get("/api/floors", (req: Request, res: Response) => {
 app.get("/api/nodes", (req: Request, res: Response) => {
   log(req);
 
-  res.status(200).json(nodesConfig);
+  try {
+    axios({ url: "/state/config" })
+    .then((json: any) => {
+      nodesConfig = json.data.nodes;
+      res.status(200).json(nodesConfig);
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400);
+  }
+
+  
 });
 
 function sendServerSendEvent(req: Request, res: Response) {
