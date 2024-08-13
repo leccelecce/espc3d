@@ -416,6 +416,7 @@ function doGuiSetup() {
     }
   };
 
+  // see https://lil-gui.georgealways.com/#
   const gui = new GUI();
 
   gui.add(effectController, 'showNodes', true).onChange(nodeChanger);
