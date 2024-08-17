@@ -417,10 +417,13 @@ function doGuiSetup() {
   };
 
   // see https://lil-gui.georgealways.com/#
-  const gui = new GUI();
+  const gui = new GUI({ title: 'Settings' });
 
   gui.add(effectController, 'showNodes', true).onChange(nodeChanger);
   gui.add(effectController, 'refreshNodes');
+
+  // start hidden
+  gui.close();
 
 }
 
