@@ -17,6 +17,8 @@ var trackingSpheres = [];
 var pulse = 1;
 var pulseValue = 0.005;
 
+var zRotationSpeed = 0.002;
+
 const bloomParams = {
   threshold: 0,
   strength: 0.95,
@@ -25,6 +27,7 @@ const bloomParams = {
 };
 
 const effectController = {
+  zRotationSpeed: 0.002,
   showNodes: true,
   refreshNodes: function () {
     fetch("/api/nodes")
@@ -416,9 +419,14 @@ function doGuiSetup() {
     }
   };
 
+  const rotationChanger = function () {
+    zRotationSpeed = effectController.zRotationSpeed;
+  };
+
   // see https://lil-gui.georgealways.com/#
   const gui = new GUI({ title: 'Settings' });
 
+  gui.add(effectController, 'zRotationSpeed', 0, 0.01, 0.001 ).onChange(rotationChanger);
   gui.add(effectController, 'showNodes', true).onChange(nodeChanger);
   gui.add(effectController, 'refreshNodes');
 
@@ -455,7 +463,7 @@ function render() {
     pulseValue = 0.005;
   }
 
-  groupPivot.rotation.z += 0.002;
+  groupPivot.rotation.z += zRotationSpeed;
 
   controls.update();
 
