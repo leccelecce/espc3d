@@ -17,7 +17,7 @@ TODO:
 4. explore showing a recent path of device movement
 5. externalise more settings
 
-![Screenshot](https://github.com/leccelecce/espc3d/blob/fd5e1d89452360631cc0b065ca4cf0a92218b327/screenshot.png)
+![Screenshot](https://github.com/leccelecce/espc3d/blob/c6d1827d9015080aff41afdb0749c1ebeae6fc2b/screenshot.png)
 
 # ESPresense-companion 3D
 
