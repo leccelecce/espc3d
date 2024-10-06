@@ -187,10 +187,13 @@ function updateTrackers(updateData) {
       labelDivEle.style.marginTop = '-1em';
 
       var labelDivLine1 = document.createElement('div');
-      labelDivLine1.textContent = `${trackName}`;
+
+      var displayName = trackName.length > 15 ? (trackName.substring(0, 14) + '...') : trackName;
+
+      labelDivLine1.textContent = `${displayName}`;
 
       var labelDivLine2 = document.createElement('div');
-      labelDivLine2.textContent = `${tracker.confidence}% confidence from ${tracker.fixes} fixes`;
+      labelDivLine2.textContent = `${tracker.confidence}% (${tracker.fixes} fixes)`;
 
       labelDivEle.append(labelDivLine1, labelDivLine2);
 
@@ -208,7 +211,7 @@ function updateTrackers(updateData) {
     trackingObject.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
     trackingObjectLabel.position.set(tracker.x - X_POS_ADJ, tracker.y - Y_POS_ADJ, tracker.z);
 
-    trackerLabels[trackName].textContent = `${tracker.confidence}% confidence from ${tracker.fixes} fixes`;
+    trackerLabels[trackName].textContent = `${tracker.confidence}% (${tracker.fixes} fixes)`;
   }
 }
 
